@@ -1,0 +1,16 @@
+# Help
+# -----
+# Script can get three parameters as target:
+# <host or ip>:<port>:<protocol: tcp, udp, http>
+# 
+# Protocols:
+# tcp - proceed with hping3
+# udp - proceed with hping3
+# http - proceed with DRipper.py
+#
+# Examples:
+# 255.255.255.255:1194:tcp
+# 255.255.255.255:53:udp
+# example.com:80:http
+# example.com:443:http
+# -----

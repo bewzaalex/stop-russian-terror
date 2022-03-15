@@ -68,10 +68,10 @@ install_py_req
 
 # Start and configure tmux
 tmux start-server
-# TODO: Enable pane name
-#tmux set -t ${tmux_session_name} -g pane-border-status top
 tmux kill-session -t ${tmux_session_name}
 tmux new-session -d -s ${tmux_session_name} -n Monitoring "htop"
+tmux set -t ${tmux_session_name} -g pane-border-status top
+tmux set -t ${tmux_session_name} -g pane-border-format "#{pane_index} #{pane_current_command}"
 tmux split-window -t ${tmux_session_name}:0 "watch -n 60 curl -s ipinfo.io"
 tmux split-window -t ${tmux_session_name}:0 "/usr/bin/env bash"
 tmux select-layout -t ${tmux_session_name}:0 tiled
@@ -112,7 +112,7 @@ for target in $(cat ${target_file} | grep -v ^# | grep -xv '' | xargs); do
     continue
   fi
 
-  tmux new-window -t ${tmux_session_name}:${tmux_window_num} -n Targets-${tmux_window_num} "${command}"
+  tmux new-window -t ${tmux_session_name}:${tmux_window_num} -n Targets "${command}"
   let "i++"
 done
 

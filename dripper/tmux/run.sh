@@ -5,7 +5,7 @@ set -x
 
 # Config
 basedir=$(readlink -f $(dirname "$BASH_SOURCE"))
-work_dir="${basedir}/StopWar"
+work_dir="${basedir}/cache"
 target_file="${basedir}/targets.txt"
 apt_req=(python3-virtualenv git xterm docker.io vim htop iotop nload cpulimit nmap telnet tmux)
 python_req=""
@@ -72,6 +72,7 @@ tmux kill-session -t ${tmux_session_name}
 tmux new-session -d -s ${tmux_session_name} -n Monitoring "htop"
 tmux set -t ${tmux_session_name} -g pane-border-status top
 tmux set -t ${tmux_session_name} -g pane-border-format "#{pane_index} #{pane_current_command}"
+tmux set -t ${tmux_session_name} mouse
 tmux split-window -t ${tmux_session_name}:0 "watch -n 60 curl -s ipinfo.io"
 tmux split-window -t ${tmux_session_name}:0 "/usr/bin/env bash"
 tmux select-layout -t ${tmux_session_name}:0 tiled

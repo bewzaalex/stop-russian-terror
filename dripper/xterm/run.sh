@@ -5,7 +5,7 @@
 
 # Config
 basedir=$(readlink -f $(dirname "$BASH_SOURCE"))
-work_dir="${basedir}/StopWar"
+work_dir="${basedir}/cache"
 target_file="${basedir}/targets.txt"
 apt_req=(python3-virtualenv git xterm docker.io vim htop iotop nload cpulimit nmap telnet)
 python_req=""

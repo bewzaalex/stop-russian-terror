@@ -109,8 +109,6 @@ for target in $(cat ${target_file} | grep -v ^# | grep -xv '' | xargs); do
       ;;
   esac
 
-  command=htop
-
   tmux_window_exist=$(tmux has-session -t ${tmux_session_name}:${tmux_window_num})
   if tmux has-session -t ${tmux_session_name}:${tmux_window_num}; then
     tmux_last_split=$((($i+1)%4))

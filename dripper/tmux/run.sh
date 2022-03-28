@@ -45,26 +45,31 @@ if [[ ! -d ${work_dir} ]]; then
 fi
 
 # Go to workdir
-cd ${work_dir}
+#cd ${work_dir}
 
 # Create virtualenv for python
 if [[ ! -d env ]]; then
-  virtualenv -p /usr/bin/python3 env
+  virtualenv -p /usr/bin/python3 ${work_dir}/env
 fi
 
 # TODO: Create if statement for this block
 # Activate python virtualenv and run python commands in it
-install_py_req () {
-  source env/bin/activate
-
-  # Install python dependencies
-  touch requirements.txt && > requirements.txt
-  for i in ${python_req[@]}; do
-    echo $i >> requirements.txt
-  done
-  pip install -r requirements.txt
-}
-install_py_req
+#install_py_req () {
+#  source env/bin/activate
+#
+#  # Install python dependencies
+#  touch requirements.txt && > requirements.txt
+#  for i in ${python_req[@]}; do
+#    echo $i >> requirements.txt
+#  done
+#  pip install -r requirements.txt
+#}
+#install_py_req
+touch ${work_dir}/requirements.txt && > ${work_dir}/requirements.txt
+for i in ${python_req[@]}; do
+  echo $i >> ${work_dir}/requirements.txt
+done
+${work_dir}/env/bin/pip install -r ${work_dir}/requirements.txt
 
 # Start and configure tmux
 tmux start-server
@@ -81,7 +86,9 @@ tmux select-layout -t ${tmux_session_name}:0 tiled
 i=0
 for target in $(cat ${target_file} | grep -v ^# | grep -xv '' | xargs); do
   host=$(printf "${target}" | cut -d ":" -f 1)
-  ip=$(dig +tries=0 +time=3 +short $host)
+  # TODO: Make correct ip resolving and add dns error resolving
+  # ip=$(dig +tries=0 +time=3 +short $host)
+  ip=${host}
   port=$(printf "${target}" | cut -d ":" -f 2)
   proto=$(printf "${target}" | cut -d ":" -f 3)
   tmux_window_num=$(($i/4+1))
@@ -101,6 +108,8 @@ for target in $(cat ${target_file} | grep -v ^# | grep -xv '' | xargs); do
       command="echo 'ERROR! Wrong protocol.'; read"
       ;;
   esac
+
+  command=htop
 
   tmux_window_exist=$(tmux has-session -t ${tmux_session_name}:${tmux_window_num})
   if tmux has-session -t ${tmux_session_name}:${tmux_window_num}; then

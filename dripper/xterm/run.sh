@@ -69,7 +69,9 @@ install_py_req
 # Start deploy
 for i in $(cat ${target_file} | grep -v ^# | grep -xv '' | xargs); do
   host=$(printf "${i}" | cut -d ":" -f 1)
-  ip=$(dig +tries=0 +time=3 +short $host)
+  # TODO: Make correct ip resolving and add dns error resolving
+  # ip=$(dig +tries=0 +time=3 +short $host)
+  ip=${host}
   port=$(printf "${i}" | cut -d ":" -f 2)
   proto=$(printf "${i}" | cut -d ":" -f 3)
 

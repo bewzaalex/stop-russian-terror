@@ -18,6 +18,8 @@ apt_req=(
   telnet
   tmux
   tor
+  tor-geoipdb
+  torsocks
   nyx
   tree
 )

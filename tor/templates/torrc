@@ -5,3 +5,7 @@ RunAsDaemon 0
 DataDirectory DATA_DIR
 ControlPort HOST:CONTROL_PORT
 MaxCircuitDirtiness 60
+AvoidDiskWrites 1
+DisableAllSwap 1
+HardwareAccel 1
+NumCPUs 2

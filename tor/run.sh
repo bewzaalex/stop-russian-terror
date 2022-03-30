@@ -22,6 +22,8 @@ apt_req=(
   torsocks
   nyx
   tree
+  iftop
+  nethogs
 )
 mhddos_repo="https://github.com/MHProDev/MHDDoS.git"
 mhddos_dir="${basedir}/mhddos"

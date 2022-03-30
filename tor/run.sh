@@ -77,8 +77,7 @@ grep -xv '' ${targets} | grep -v '^#' | while read -r target; do
   tor_data_dir_escaped=$(echo ${tor_data_dir} | sed 's/\//\\\//g')
   tor_config="${tor_work_dir}/$i/torrc"
   tor_socks_port=$(expr 9050 + $i)
-  tor_control_port=$(expr 9060 + $i)
-  #tor_hash=$(echo ${RANDOM} | sha256sum | head -c 58)
+  tor_control_port=$(expr 12060 + $i)
   mhddos_proxy_file="${mhddos_dir}/files/proxies/$i.txt"
 
   # Create tor directories and copy config files
@@ -89,12 +88,10 @@ grep -xv '' ${targets} | grep -v '^#' | while read -r target; do
   sed -i "s/SOCKS_PORT/${tor_socks_port}/g" ${tor_config} 
   sed -i "s/DATA_DIR/${tor_data_dir_escaped}/g" ${tor_config} 
   sed -i "s/CONTROL_PORT/${tor_control_port}/g" ${tor_config} 
-  #sed -i "s/HASH/${tor_hash}/g" ${tor_config}
 
   # Start tor and tools
   tmux new-window -t ${tmux_session_name}:$i -n t "tor -f ${tor_config}"
   tmux split-window -t ${tmux_session_name}:$i "nyx -i 127.0.0.1:${tor_control_port}"
-  #tmux split-window -t ${tmux_session_name}:$i "watch -n 600 curl -s --socks5-hostname 127.0.0.1:${tor_socks_port} ipinfo.io"
 
   # Create proxy file for mhddos
   echo "socks5://127.0.0.1:${tor_socks_port}" > ${mhddos_proxy_file}

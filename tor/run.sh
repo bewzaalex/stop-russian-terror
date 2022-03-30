@@ -70,7 +70,7 @@ mkdir -p ${tor_work_dir}
 
 # Working with targets
 i=0
-grep -xv -e '' -e '^#' ${targets} | while read -r target; do
+grep -xv '' ${targets} | grep -v '^#' | while read -r target; do
   let "i++"
   echo $i ${target}
   tor_data_dir="${tor_work_dir}/$i/data"

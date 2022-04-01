@@ -9,3 +9,4 @@ AvoidDiskWrites 1
 DisableAllSwap 1
 HardwareAccel 1
 NumCPUs 2
+#Log info stdout

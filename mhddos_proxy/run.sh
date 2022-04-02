@@ -67,9 +67,8 @@ tmux set -t ${tmux_session_name} -g pane-border-format \
   "#{pane_index} #{pane_current_command}"
 tmux set -t ${tmux_session_name} mouse
 tmux split-window -t ${tmux_session_name}:0 "nload"
-tmux split-window -t ${tmux_session_name}:0 "/usr/bin/env bash"
-tmux select-layout -t ${tmux_session_name}:0 tiled
 
 # Start targets
 command="cd ${src_dir} && ./env/bin/python runner.py ${targets} ${mhddos_params}"
-tmux new-window -t ${tmux_session_name}:1 -n "" "${command}"
+tmux split-window -t ${tmux_session_name}:0 "${command}"
+tmux select-layout -t ${tmux_session_name}:0 tiled

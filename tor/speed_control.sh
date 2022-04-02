@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# TODO: Add precision in time (milliseconds, bytes)
 
 # Debug
 #set -x
@@ -36,18 +35,18 @@ while true; do
   fi
 
   # Get download start time
-  start=$(date +%s)
+  start=$(date +%s%N)
 
   # Download file and store finish time
   curl --silent --connect-timeout ${curl_max} --max-time ${curl_max} \
     --socks5-hostname ${tor_host}:${tor_socks_port} ${ten_MB_file} --output /dev/null
-  end=$(date +%s)
+  end=$(date +%s%N)
 
   # Calculate spent seconds and speed
   time=$(expr ${end} - ${start})
   speed=0
   if [ ${time} -ne 0 ]; then
-    speed=$(expr 10000 / ${time})
+	  speed=$((10000000 / (${time} / 1000000)))
   fi
   echo -n "speed is ${speed} KB/s, "
 

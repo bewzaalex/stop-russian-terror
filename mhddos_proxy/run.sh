@@ -5,7 +5,7 @@
 
 # Config
 basedir=$(readlink -f $(dirname "$BASH_SOURCE"))
-targets=($(cat ${basedir}/targets.txt | xargs))
+targets=($(cat ${basedir}/targets.txt | grep -v ^\# | grep -xv '' | xargs))
 apt_req=(
   python3-virtualenv
   git

